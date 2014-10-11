@@ -1,0 +1,76 @@
+# to use big instance change name after "%data" to : biomass-data.cdat 
+#to use small instance change name after "%data" to : biomass-data-SmallGen.cdat
+
+%data biomass-data-SmallGen.cdat : SIZE set, FARMS set, SP, TC, PC, EP, EU, ET, Q[FARMS], K[SIZE], d[FARMS,FARMS], gamma[FARMS], CF[SIZE], Alpha
+variables:
+	   #Quantity of waste treated at plant i
+	X[FARMS]: real[0..];
+	   #Quantity of waste send from farm j to plant i
+	XS[FARMS,FARMS]: real[0..];
+	  #1 if plant i is installed with capacity k
+	Y[FARMS,SIZE]: binary;
+	  #1 if we send waste from farm j to plant i
+	W[FARMS,FARMS]: real[0..];
+	
+
+objectives:
+	#Maximize profit:
+
+	Profit: sum{i in FARMS: (SP-PC)* X[i] } 
+		- sum{i in FARMS, j in FARMS : TC * XS[i,j] * d[i,j]}
+		- sum{i in FARMS, k in SIZE : CF[k]*Y[i,k] } ->max;
+
+	#Maximize energy produce minus energy consumed:
+
+	#uncomment next 3 lines to activate energy objective function & comment profit objective function
+	#Profit: sum{i in FARMS: (EP-EU)* X[i] } 
+	#	-  sum{i in FARMS, j in FARMS : (ET)*XS[i,j]* d[i,j] } -> max;   # if we have energy used in construction add next line: - sum{i in FARMS, k in SIZE : E[k]*Y[i,k] } 
+		
+								
+constraints:
+	
+	# you cannot send more than farm«s capacity
+	farms {j in FARMS: sum{i in FARMS: XS[i,j]} <= sum{i in FARMS:Q[j]*W[i,j]};}
+
+	#A farm can only send to one plant
+	exclusivity {j in FARMS : sum{i in FARMS: W[i,j]} <= 1;}
+	
+	#Maximum one plant per site
+	nPlants {i in FARMS : sum{k in SIZE: Y[i,k]} <= 1;}
+
+	#You can send to i only if there is a plant there
+	cond1 {i in FARMS,j in FARMS: W[i,j] <= sum{k in SIZE: Y[i,k]};}
+	
+	#Production capacity
+	#ProductionCap: X[] <= K[]*Y[,]; 
+	ProductionCap {i in FARMS: X[i] <= sum{k in SIZE: K[k]*Y[i,k]};} 
+
+	# Equivanlence between what is send (waste) and what is produce (methane)-
+	equivalence {i in FARMS: X[i] = sum{j in FARMS: gamma[i]*XS[i,j]};}	
+
+	#Constraint: sum{i in FARMS, j in FARMS: XS[i,j]} >= sum{i in FARMS: Alpha*Q[i]};
+	Const: sum{i in FARMS, j in FARMS: XS[i,j]} >= sum{i in FARMS: Alpha*Q[i]};  
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

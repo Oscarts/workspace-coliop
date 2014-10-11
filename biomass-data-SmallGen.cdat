@@ -1,0 +1,47 @@
+
+# Energy generated per m3 of biogas
+%EP < 2 >;
+
+# energy used to process waste 
+%EU < 1 >;
+
+# energy used in transportation 
+%ET < 1 >;
+
+#farms
+%FARMS set < F_1  F_2  F_3  F_4  F_5  F_6 >
+
+ # Selling price of biogas  
+ %SP < 3 >
+
+#Size depending on capacity of plant
+%SIZE set < small big > 
+ 
+#total transformation(production) cost from waste to biogas (methane) 
+ %PC < 0.2 >
+ 
+ # Transportation cost from any two points [
+ %TC < 0.015 >
+ 
+
+# tons of waste produce per farm(Tonnage produit) 
+%Q[FARMS] <4 5 3 8 2 1 >
+   		
+#Distance Matrix
+%d[FARMS,FARMS] < 0 60 90 120 10 200
+		  60 0 150 160 20  80
+		 90 150 0 100 40  200
+		120 160 100 0 30  100
+		 10  20 40 30  0  120
+		200 80 200 100 120 0>
+
+ 
+#Transformation coefficient of waste to methane
+%gamma[FARMS] < 1 1 1 1 1 1>
+
+%K[SIZE] <20 21>;
+
+%CF[SIZE] <20 21>;
+
+%Alpha < 1 >;
+
